@@ -1,0 +1,12 @@
+<h2>Posts</h2>
+<input [formControl]="userFilter" placeholder="Filter by username" />
+
+<ul>
+  <li *ngFor="let post of paginatedPosts">
+    <button class="link-button" (click)="selectPost(post)">
+      {{ post.title }} (User ID: {{ post.userId }})
+    </button>  </li>
+</ul>
+
+<button (click)="prevPage()">Prev</button>
+<button (click)="nextPage()">Next</button>

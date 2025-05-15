@@ -1,0 +1,31 @@
+import { Inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { User } from '../../models/user.model';
+import { API_BASE_URL } from '../../tokens/api-base-url.token';
+import { Post } from '../../models/post.model';
+
+@Injectable({ providedIn: 'root' })
+export class UserService {
+  private usersSubject = new BehaviorSubject<User[] | null>(null); // makes state
+  users$ = this.usersSubject.asObservable(); // exposes as a readonly value
+
+  constructor(
+    private http: HttpClient,
+    @Inject(API_BASE_URL) private baseUrl: string
+  ) {}
+
+  fetchUsers() {
+    return this.http
+      .get<User[]>(`${this.baseUrl}/users`)
+      .pipe(tap((users) => this.usersSubject.next(users)));
+  }
+
+  getUsers(): Observable<User[]> {
+    if (this.usersSubject.value) {
+      return this.users$ as Observable<User[]>;
+    } else {
+      return this.fetchUsers();
+    }
+  }
+}
