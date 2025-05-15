@@ -1,5 +1,9 @@
-<div *ngIf="post">
+<ng-container *ngIf="post$ | async as post; else loading">
   <h2>{{ post.title }}</h2>
   <p>{{ post.body }}</p>
   <button (click)="goBack()">Back</button>
-</div>
+</ng-container>
+
+<ng-template #loading>
+  <p>Loading post...</p>
+</ng-template>

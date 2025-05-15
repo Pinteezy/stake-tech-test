@@ -1,12 +1,22 @@
-<h2>Posts</h2>
-<input [formControl]="userFilter" placeholder="Filter by username" />
+<div *ngIf="vm$ | async as vm">
+  <input [formControl]="userFilter" placeholder="Filter by username" />
 
-<ul>
-  <li *ngFor="let post of paginatedPosts">
-    <button class="link-button" (click)="selectPost(post)">
-      {{ post.title }} (User ID: {{ post.userId }})
-    </button>  </li>
-</ul>
+  <ul>
+    <li *ngFor="let post of vm.posts" (click)="selectPost(post)">
+      {{ post.title }} {{ post.userId }}
+    </li>
+  </ul>
 
-<button (click)="prevPage()">Prev</button>
-<button (click)="nextPage()">Next</button>
+  <div>
+    <button (click)="prevPage()" [disabled]="vm.currentPage === 0">
+      Previous
+    </button>
+    <span>Page {{ vm.currentPage + 1 }} / {{ vm.totalPages }}</span>
+    <button
+      (click)="nextPage(vm.totalPages)"
+      [disabled]="vm.currentPage + 1 >= vm.totalPages"
+    >
+      Next
+    </button>
+  </div>
+</div>
