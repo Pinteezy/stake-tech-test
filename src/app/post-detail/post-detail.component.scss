@@ -1,14 +1,11 @@
 .post-detail-container {
-    display: flex;
-    justify-content: center;
-  }
-  
-  .post-detail-card {
-    width: 100%;
-    max-width: 600px;
-    border: 1px solid;
-    padding: 16px;
-  }
-  
+  display: flex;
+  justify-content: center;
+}
 
-  
+.post-detail-card {
+  width: 100%;
+  max-width: 600px;
+  border: 1px solid;
+  padding: 16px;
+}
