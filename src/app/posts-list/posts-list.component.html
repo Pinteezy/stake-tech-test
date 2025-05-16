@@ -1,20 +1,47 @@
-<div *ngIf="vm$ | async as vm">
-  <input [formControl]="userFilter" placeholder="Filter by username" />
+<div *ngIf="postsViewModel$ | async as pvm" class="posts-wrapper">
+  <!-- Filter Input -->
+  <div class="filter-container">
+    <label>Filter by username</label>
+    <input
+      id="filterInput"
+      type="text"
+      [formControl]="userFilter"
+      placeholder="e.g. Bret"
+      class="filter-input"
+    />
+  </div>
 
-  <ul>
-    <li *ngFor="let post of vm.posts" (click)="selectPost(post)">
-      {{ post.title }} {{ post.userId }}
-    </li>
-  </ul>
+  <!-- Posts List -->
+  <div class="posts-list">
+    <mat-card
+      class="post-card"
+      *ngFor="let post of pvm.posts"
+      (click)="selectPost(post)"
+      tabindex="0"
+    >
+      <mat-card-title>{{ post.title }}</mat-card-title>
+      <mat-card-subtitle>User ID: {{ post.userId }}</mat-card-subtitle>
+    </mat-card>
+  </div>
 
-  <div>
-    <button (click)="prevPage()" [disabled]="vm.currentPage === 0">
+  <!-- Pagination -->
+  <div class="pagination">
+    <button
+      mat-raised-button
+      (click)="prevPage()"
+      [disabled]="pvm.currentPage === 0"
+    >
       Previous
     </button>
-    <span>Page {{ vm.currentPage + 1 }} / {{ vm.totalPages }}</span>
+
+    <span class="page-indicator">
+      Page {{ pvm.currentPage + 1 }} / {{ pvm.totalPages }}
+    </span>
+
     <button
-      (click)="nextPage(vm.totalPages)"
-      [disabled]="vm.currentPage + 1 >= vm.totalPages"
+      mat-raised-button
+      (click)="nextPage(pvm.totalPages)"
+      [disabled]="pvm.currentPage + 1 >= pvm.totalPages"
     >
       Next
     </button>

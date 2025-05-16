@@ -7,9 +7,10 @@ import { Observable, switchMap, of } from 'rxjs';
 @Component({
   selector: 'app-post-detail',
   templateUrl: './post-detail.component.html',
+  styleUrls: ['./post-detail.component.scss']
 })
 export class PostDetailComponent {
-  post$: Observable<Post | null>;
+  post$: Observable<Post>;
 
   constructor(
     private route: ActivatedRoute,
