@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { Observable, BehaviorSubject, tap, catchError, throwError } from 'rxjs';
 import { Post } from '../../models/post.model';
 import { API_BASE_URL } from '../../tokens/api-base-url.token';
 
@@ -18,9 +18,14 @@ export class PostService {
   ) {}
 
   fetchPosts(): Observable<Post[]> {
-    return this.http
-      .get<Post[]>(`${this.baseUrl}/posts`)
-      .pipe(tap((posts) => this.postsSubject.next(posts)));
+    return this.http.get<Post[]>(`${this.baseUrl}/posts`).pipe(
+      tap((posts) => this.postsSubject.next(posts)),
+      catchError((error) => {
+        console.error('Failed to fetch posts', error);
+        this.postsSubject.next(null);
+        return throwError(() => error);
+      })
+    );
   }
 
   getPosts(): Observable<Post[]> {

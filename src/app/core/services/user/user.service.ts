@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 import { User } from '../../models/user.model';
 import { API_BASE_URL } from '../../tokens/api-base-url.token';
 import { Post } from '../../models/post.model';
@@ -16,9 +16,14 @@ export class UserService {
   ) {}
 
   fetchUsers() {
-    return this.http
-      .get<User[]>(`${this.baseUrl}/users`)
-      .pipe(tap((users) => this.usersSubject.next(users)));
+    return this.http.get<User[]>(`${this.baseUrl}/users`).pipe(
+      tap((users) => this.usersSubject.next(users)),
+      catchError((error) => {
+        console.error('Failed to fetch users', error);
+        this.usersSubject.next(null);
+        return throwError(() => error);
+      })
+    );
   }
 
   getUsers(): Observable<User[]> {
