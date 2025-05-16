@@ -1,14 +1,17 @@
 # StakeTechTest
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.2.13.
+You have to develop a two page application using the latest Angular you are experienced with- ideally 14 if you have exposure
+You can use any online app development platform like Stackblitz to edit/save your code. (Stackblitz would be our preference though :) Brownie points for Stackblitz)
+You should be able to run and demonstrate the app in the interview
+The default page should display list of Posts with pagination - 10 at time with next and prev buttons. The data should be loaded from https://jsonplaceholder.typicode.com/posts
+The default page should have a Input text to filter the posts by userName fetched from https://jsonplaceholder.typicode.com/users
+when clicked on a post, should load the post details in a new page
+User should be able to navigate back from the post detail page via a button.
+Minimal default native styles will do but you can use any UI library if you need (like angular material or bootstrap etc).
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-
-## Code scaffolding
-
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`.
 
 ## Build
 
@@ -18,10 +21,3 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
