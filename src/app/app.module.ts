@@ -11,7 +11,6 @@ import { API_BASE_URL } from './core/tokens/api-base-url.token';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 
-
 @NgModule({
   declarations: [AppComponent, PostsListComponent, PostDetailComponent],
   imports: [
@@ -20,7 +19,7 @@ import { MatCardModule } from '@angular/material/card';
     HttpClientModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatCardModule
+    MatCardModule,
   ],
   providers: [
     { provide: API_BASE_URL, useValue: 'https://jsonplaceholder.typicode.com' },

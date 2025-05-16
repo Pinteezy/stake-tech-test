@@ -6,6 +6,8 @@ export function filterPostsByUsername(
   users: User[],
   filter: string | null
 ): Post[] {
+  if (!filter) return posts;
+
   const normalizedFilter = (filter ?? '').toLowerCase();
 
   const matchedUserIds = new Set(
@@ -17,7 +19,11 @@ export function filterPostsByUsername(
   return posts.filter((post) => matchedUserIds.has(post.userId));
 }
 
-export function paginate<T>(items: Post[], page: number, pageSize: number): Post[] {
+export function paginate(
+  items: Post[],
+  page: number,
+  pageSize: number
+): Post[] {
   const start = page * pageSize;
   return items.slice(start, start + pageSize);
 }

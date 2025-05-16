@@ -7,8 +7,8 @@ import { Post } from '../../models/post.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private usersSubject = new BehaviorSubject<User[] | null>(null); // makes state
-  users$ = this.usersSubject.asObservable(); // exposes as a readonly value
+  private usersSubject = new BehaviorSubject<User[] | null>(null);
+  users$ = this.usersSubject.asObservable();
 
   constructor(
     private http: HttpClient,

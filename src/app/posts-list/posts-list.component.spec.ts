@@ -88,7 +88,7 @@ describe('PostsListComponent', () => {
     setTimeout(() => {
       expect(component.currentPage$.value).toBe(0);
       done();
-    }, 0);
+    }, 600);
   });
 
   it('should navigate to post detail and store selected post', () => {

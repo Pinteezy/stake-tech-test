@@ -1,6 +1,13 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { BehaviorSubject, combineLatest, map, startWith, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  map,
+  startWith,
+  tap,
+} from 'rxjs';
 import { PostService } from 'src/app/core/services/post/post.service';
 import { UserService } from 'src/app/core/services/user/user.service';
 import { Post } from 'src/app/core/models/post.model';
@@ -10,7 +17,7 @@ import { filterPostsByUsername, paginate } from '../core/utils/post.utils';
 @Component({
   selector: 'app-posts-list',
   templateUrl: './posts-list.component.html',
-  styleUrls: ['./posts-list.component.scss']
+  styleUrls: ['./posts-list.component.scss'],
 })
 export class PostsListComponent {
   userFilter = new FormControl('');
@@ -21,6 +28,7 @@ export class PostsListComponent {
     this.postService.getPosts(),
     this.userService.getUsers(),
     this.userFilter.valueChanges.pipe(
+      debounceTime(300),
       startWith(''),
       tap(() => this.currentPage$.next(0)) // reset to page 0 on filter change
     ),
