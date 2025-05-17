@@ -1,7 +1,7 @@
 <div *ngIf="postsViewModel$ | async as pvm" class="posts-wrapper">
   <app-filter-input
-    [value]="userFilter.value ?? ''"
-    (valueChange)="userFilter.setValue($event)"
+    [value]="pvm.filter"
+    (valueChange)="onFilterChange($event)"
   ></app-filter-input>
 
   <div class="scroll-container">

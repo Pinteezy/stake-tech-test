@@ -7,7 +7,7 @@ import { Observable, switchMap, of } from 'rxjs';
 @Component({
   selector: 'app-post-detail',
   templateUrl: './post-detail.component.html',
-  styleUrls: ['./post-detail.component.scss']
+  styleUrls: ['./post-detail.component.scss'],
 })
 export class PostDetailComponent {
   post$: Observable<Post>;
@@ -19,8 +19,8 @@ export class PostDetailComponent {
   ) {
     this.post$ = this.postService.selectedPost$.pipe(
       switchMap((selected) => {
-        if (selected) return of(selected);
         const id = Number(this.route.snapshot.paramMap.get('id'));
+        if (selected?.id === id) return of(selected);
         return this.postService.getPostById(id);
       })
     );

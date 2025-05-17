@@ -1,4 +1,13 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-filter-input',
@@ -8,8 +17,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       <input
         id="filterInput"
         type="text"
-        [value]="value"
-        (input)="onInput($event)"
+        [formControl]="inputControl"
         placeholder="e.g. Bret"
         class="filter-input"
       />
@@ -32,12 +40,23 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
     `,
   ],
 })
-export class FilterInputComponent {
-  @Input() value!: string;
+export class FilterInputComponent implements OnInit, OnDestroy {
+  @Input() value: string = '';
   @Output() valueChange = new EventEmitter<string>();
 
-  onInput(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.valueChange.emit(value);
+  readonly inputControl = new FormControl('');
+  private readonly destroy$ = new Subject<void>();
+
+  ngOnInit(): void {
+    this.inputControl.setValue(this.value, { emitEvent: false });
+
+    this.inputControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this.destroy$))
+      .subscribe((val) => this.valueChange.emit(val ?? ''));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

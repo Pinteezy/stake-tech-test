@@ -1,13 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import {
-  combineLatest,
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  startWith,
-  tap,
-} from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { PostService } from 'src/app/core/services/post/post.service';
 import { UserService } from 'src/app/core/services/user/user.service';
 import { Post } from 'src/app/core/models/post.model';
@@ -20,7 +12,6 @@ import { filterPostsByUsername, paginate } from '../../core/utils/post.utils';
   styleUrls: ['./posts.component.scss'],
 })
 export class PostsComponent {
-  userFilter = new FormControl(this.postService.getFilter());
   pageSize = 10;
 
   postsViewModel$ = combineLatest([
@@ -28,15 +19,6 @@ export class PostsComponent {
     this.userService.getUsers(),
     this.postService.page$,
     this.postService.filter$,
-    this.userFilter.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      tap((value) => {
-        this.postService.setPage(0); // Reset page only on distinct filter change
-        this.postService.setFilter(value as string);
-      }),
-      startWith(this.postService.getFilter())
-    ),
   ]).pipe(
     map(([posts, users, currentPage, filter]) => {
       const filtered = filterPostsByUsername(posts, users, filter);
@@ -47,6 +29,7 @@ export class PostsComponent {
         totalFiltered: filtered.length,
         currentPage,
         totalPages: Math.ceil(filtered.length / this.pageSize),
+        filter,
       };
     })
   );
@@ -70,5 +53,9 @@ export class PostsComponent {
   selectPost(post: Post) {
     this.postService.setSelectedPost(post);
     this.router.navigate(['/posts', post.id]);
+  }
+
+  onFilterChange(value: string) {
+    this.postService.setFilter(value);
   }
 }

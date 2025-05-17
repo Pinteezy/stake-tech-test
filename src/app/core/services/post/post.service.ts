@@ -52,7 +52,10 @@ export class PostService {
   }
 
   setFilter(value: string) {
-    this.filterSubject.next(value);
+    if (value !== this.filterSubject.value) {
+      this.filterSubject.next(value);
+      this.setPage(0);
+    }
   }
 
   getFilter(): string {
