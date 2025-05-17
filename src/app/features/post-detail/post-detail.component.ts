@@ -17,11 +17,16 @@ export class PostDetailComponent {
     private router: Router,
     private postService: PostService
   ) {
-    this.post$ = this.postService.selectedPost$.pipe(
-      switchMap((selected) => {
-        const id = Number(this.route.snapshot.paramMap.get('id'));
-        if (selected?.id === id) return of(selected);
-        return this.postService.getPostById(id);
+    this.post$ = this.route.paramMap.pipe(
+      switchMap((params) => {
+        const id = Number(params.get('id'));
+        return this.postService.selectedPost$.pipe(
+          switchMap((selected) =>
+            selected?.id === id
+              ? of(selected)
+              : this.postService.getPostById(id)
+          )
+        );
       })
     );
   }

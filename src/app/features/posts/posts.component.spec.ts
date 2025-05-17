@@ -4,97 +4,94 @@ import { PostService } from 'src/app/core/services/post/post.service';
 import { UserService } from 'src/app/core/services/user/user.service';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { User } from '../../core/models/user.model';
+import { Post } from 'src/app/core/models/post.model';
+import { User } from 'src/app/core/models/user.model';
 
-const mockPosts = [
-  { id: 1, userId: 1, title: 'Post 1', body: 'Body 1' },
-  { id: 2, userId: 2, title: 'Post 2', body: 'Body 2' },
-  { id: 3, userId: 1, title: 'Post 3', body: 'Body 3' },
-];
-
-const mockUsers = [
-  { id: 1, username: 'Bret' },
-  { id: 2, username: 'Antonette' },
-];
-
-describe('PostsListComponent', () => {
+describe('PostsComponent', () => {
   let component: PostsComponent;
   let fixture: ComponentFixture<PostsComponent>;
-  let mockPostService: jasmine.SpyObj<PostService>;
-  let mockUserService: jasmine.SpyObj<UserService>;
-  let mockRouter: jasmine.SpyObj<Router>;
+  let postServiceMock: Partial<PostService>;
+  let userServiceMock: Partial<UserService>;
+  let routerSpy: jasmine.SpyObj<Router>;
+
+  const mockPosts: Post[] = [
+    { id: 1, userId: 1, title: 'Title 1', body: 'Body 1' },
+    { id: 2, userId: 2, title: 'Title 2', body: 'Body 2' },
+  ];
+
+  const mockUsers = [
+    { id: 1, username: 'john' },
+    { id: 2, username: 'jane' },
+  ] as User[];
 
   beforeEach(async () => {
-    mockPostService = jasmine.createSpyObj('PostService', [
-      'getPosts',
-      'setSelectedPost',
-    ]);
-    mockUserService = jasmine.createSpyObj('UserService', ['getUsers']);
-    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    postServiceMock = {
+      getPosts: () => of(mockPosts),
+      page$: of(0),
+      filter$: of(''),
+      getPage: () => 0,
+      setPage: jasmine.createSpy('setPage'),
+      setSelectedPost: jasmine.createSpy('setSelectedPost'),
+      setFilter: jasmine.createSpy('setFilter'),
+    };
+
+    userServiceMock = {
+      getUsers: () => of(mockUsers),
+    };
+
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
       declarations: [PostsComponent],
-      imports: [ReactiveFormsModule, MatCardModule],
       providers: [
-        { provide: PostService, useValue: mockPostService },
-        { provide: UserService, useValue: mockUserService },
-        { provide: Router, useValue: mockRouter },
+        { provide: PostService, useValue: postServiceMock as PostService },
+        { provide: UserService, useValue: userServiceMock as UserService },
+        { provide: Router, useValue: routerSpy },
       ],
     }).compileComponents();
-
-    mockPostService.getPosts.and.returnValue(of(mockPosts));
-    mockUserService.getUsers.and.returnValue(of(mockUsers as User[]));
 
     fixture = TestBed.createComponent(PostsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create component', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should go to next page if not at last page', () => {
-    // component.currentPage$.next(0);
-    component.nextPage(2);
-    // expect(component.currentPage$.value).toBe(1);
-  });
-
-  it('should not go to next page if at last page', () => {
-    // component.currentPage$.next(1);
-    component.nextPage(2);
-    // expect(component.currentPage$.value).toBe(1);
-  });
-
-  it('should go to previous page if not at first page', () => {
-    // component.currentPage$.next(1);
-    component.prevPage();
-    // expect(component.currentPage$.value).toBe(0);
-  });
-
-  it('should not go to previous page if at first page', () => {
-    // component.currentPage$.next(0);
-    component.prevPage();
-    // expect(component.currentPage$.value).toBe(0);
-  });
-
-  it('should reset page to 0 when filter changes', (done) => {
-    // component.currentPage$.next(2);
-    component.userFilter.setValue('Bret');
-
-    // Wait for debounce
-    setTimeout(() => {
-      // expect(component.currentPage$.value).toBe(0);
-      done();
-    }, 600);
-  });
-
-  it('should navigate to post detail and store selected post', () => {
+  it('should navigate to post detail and set selected post', () => {
     const post = mockPosts[0];
     component.selectPost(post);
-    expect(mockPostService.setSelectedPost).toHaveBeenCalledWith(post);
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/posts', post.id]);
+    expect(postServiceMock.setSelectedPost).toHaveBeenCalledWith(post);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/posts', post.id]);
+  });
+
+  it('should go to next page if not at last page', () => {
+    postServiceMock.getPage = () => 0;
+    component.nextPage(3);
+    expect(postServiceMock.setPage).toHaveBeenCalledWith(1);
+  });
+
+  it('should not go to next page if on last page', () => {
+    postServiceMock.getPage = () => 2;
+    component.nextPage(3);
+    expect(postServiceMock.setPage).not.toHaveBeenCalled();
+  });
+
+  it('should go to previous page if not on first page', () => {
+    postServiceMock.getPage = () => 1;
+    component.prevPage();
+    expect(postServiceMock.setPage).toHaveBeenCalledWith(0);
+  });
+
+  it('should not go to previous page if on first page', () => {
+    postServiceMock.getPage = () => 0;
+    component.prevPage();
+    expect(postServiceMock.setPage).not.toHaveBeenCalled();
+  });
+
+  it('should call setFilter on filter change', () => {
+    component.onFilterChange('john');
+    expect(postServiceMock.setFilter).toHaveBeenCalledWith('john');
   });
 });

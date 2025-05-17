@@ -4,7 +4,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { API_BASE_URL } from '../../tokens/api-base-url.token';
 import { Post } from '../../models/post.model';
 
-describe('PostService (basic)', () => {
+describe('PostService', () => {
   let service: PostService;
   let httpMock: HttpTestingController;
 

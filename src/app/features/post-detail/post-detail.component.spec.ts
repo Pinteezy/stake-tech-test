@@ -1,68 +1,67 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PostDetailComponent } from './post-detail.component';
-import { PostService } from 'src/app/core/services/post/post.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { PostService } from 'src/app/core/services/post/post.service';
 import { of } from 'rxjs';
 import { Post } from 'src/app/core/models/post.model';
-import { MatCardModule } from '@angular/material/card';
 
 describe('PostDetailComponent', () => {
   let component: PostDetailComponent;
   let fixture: ComponentFixture<PostDetailComponent>;
-  let mockPostService: jasmine.SpyObj<PostService>;
-  let mockRouter: jasmine.SpyObj<Router>;
+  let postServiceMock: Partial<PostService>;
+  let routerSpy: jasmine.SpyObj<Router>;
 
   const mockPost: Post = {
     id: 1,
     userId: 1,
-    title: 'Mock post title',
-    body: 'Mock post body',
+    title: 'Mock title',
+    body: 'Mock body',
   };
 
   beforeEach(async () => {
-    mockPostService = jasmine.createSpyObj('PostService', ['getPostById'], {
+    postServiceMock = {
       selectedPost$: of(mockPost),
-    });
+      getPostById: jasmine
+        .createSpy('getPostById')
+        .and.returnValue(of(mockPost)),
+    };
 
-    mockRouter = jasmine.createSpyObj('Router', ['navigate']);
+    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
       declarations: [PostDetailComponent],
-      imports: [MatCardModule],
       providers: [
-        { provide: PostService, useValue: mockPostService },
+        { provide: PostService, useValue: postServiceMock },
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: {
-              paramMap: {
-                get: () => '1',
-              },
-            },
+            paramMap: of({
+              get: () => '1', // simulate id=1 in route
+            }),
           },
         },
-        { provide: Router, useValue: mockRouter },
+        { provide: Router, useValue: routerSpy },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PostDetailComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
-  it('should create component', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should return post from selectedPost$ when available', (done) => {
+  it('should get post from selectedPost$ when ID matches', (done) => {
     component.post$.subscribe((post) => {
       expect(post).toEqual(mockPost);
+      expect(postServiceMock.getPostById).not.toHaveBeenCalled();
       done();
     });
   });
 
-  it('should navigate back to / on goBack()', () => {
+  it('should navigate back when goBack() is called', () => {
     component.goBack();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
   });
 });

@@ -35,7 +35,6 @@ export class PostService {
   }
 
   getPosts(): Observable<Post[]> {
-    // If already fetched, use cached version
     if (this.postsSubject.value) {
       return this.posts$ as Observable<Post[]>;
     } else {
