@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
-  BehaviorSubject,
   combineLatest,
   debounceTime,
+  distinctUntilChanged,
   map,
   startWith,
   tap,
@@ -20,21 +20,25 @@ import { filterPostsByUsername, paginate } from '../../core/utils/post.utils';
   styleUrls: ['./posts-list.component.scss'],
 })
 export class PostsListComponent {
-  userFilter = new FormControl('');
-  currentPage$ = new BehaviorSubject(0);
+  userFilter = new FormControl(this.postService.getFilter());
   pageSize = 10;
 
   postsViewModel$ = combineLatest([
     this.postService.getPosts(),
     this.userService.getUsers(),
+    this.postService.page$,
+    this.postService.filter$,
     this.userFilter.valueChanges.pipe(
       debounceTime(300),
-      startWith(''),
-      tap(() => this.currentPage$.next(0)) // reset to page 0 on filter change
+      distinctUntilChanged(),
+      tap((value) => {
+        this.postService.setPage(0); // Reset page only on distinct filter change
+        this.postService.setFilter(value as string);
+      }),
+      startWith(this.postService.getFilter())
     ),
-    this.currentPage$,
   ]).pipe(
-    map(([posts, users, filter, currentPage]) => {
+    map(([posts, users, currentPage, filter]) => {
       const filtered = filterPostsByUsername(posts, users, filter);
       const paginated = paginate(filtered, currentPage, this.pageSize);
 
@@ -54,13 +58,13 @@ export class PostsListComponent {
   ) {}
 
   nextPage(totalPages: number) {
-    const next = this.currentPage$.value + 1;
-    if (next < totalPages) this.currentPage$.next(next);
+    const next = this.postService.getPage() + 1;
+    if (next < totalPages) this.postService.setPage(next);
   }
 
   prevPage() {
-    const prev = this.currentPage$.value - 1;
-    if (prev >= 0) this.currentPage$.next(prev);
+    const prev = this.postService.getPage() - 1;
+    if (prev >= 0) this.postService.setPage(prev);
   }
 
   selectPost(post: Post) {

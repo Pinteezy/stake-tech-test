@@ -12,6 +12,12 @@ export class PostService {
   private selectedPostSubject = new BehaviorSubject<Post | null>(null);
   selectedPost$ = this.selectedPostSubject.asObservable();
 
+  private filterSubject = new BehaviorSubject<string>('');
+  filter$ = this.filterSubject.asObservable();
+
+  private pageSubject = new BehaviorSubject<number>(0);
+  page$ = this.pageSubject.asObservable();
+
   constructor(
     private http: HttpClient,
     @Inject(API_BASE_URL) private baseUrl: string
@@ -43,5 +49,21 @@ export class PostService {
 
   setSelectedPost(post: Post): void {
     this.selectedPostSubject.next(post);
+  }
+
+  setFilter(value: string) {
+    this.filterSubject.next(value);
+  }
+
+  getFilter(): string {
+    return this.filterSubject.value;
+  }
+
+  setPage(value: number) {
+    this.pageSubject.next(value);
+  }
+
+  getPage(): number {
+    return this.pageSubject.value;
   }
 }
