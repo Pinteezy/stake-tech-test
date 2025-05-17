@@ -12,7 +12,7 @@ import { PostService } from 'src/app/core/services/post/post.service';
 import { UserService } from 'src/app/core/services/user/user.service';
 import { Post } from 'src/app/core/models/post.model';
 import { Router } from '@angular/router';
-import { filterPostsByUsername, paginate } from '../core/utils/post.utils';
+import { filterPostsByUsername, paginate } from '../../core/utils/post.utils';
 
 @Component({
   selector: 'app-posts-list',

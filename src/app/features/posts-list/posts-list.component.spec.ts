@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
-import { User } from '../core/models/user.model';
+import { User } from '../../core/models/user.model';
 
 const mockPosts = [
   { id: 1, userId: 1, title: 'Post 1', body: 'Body 1' },

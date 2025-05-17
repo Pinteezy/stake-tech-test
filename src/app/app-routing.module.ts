@@ -1,11 +1,19 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PostsListComponent } from './posts-list/posts-list.component';
-import { PostDetailComponent } from './post-detail/post-detail.component';
 
 const routes: Routes = [
-  { path: '', component: PostsListComponent },
-  { path: 'posts/:id', component: PostDetailComponent },
+  {
+    path: '',
+    loadChildren: () =>
+      import('./features/posts-list/posts-list.module').then((m) => m.PostsListModule),
+  },
+  {
+    path: 'posts/:id',
+    loadChildren: () =>
+      import('./features/post-detail/post-detail.module').then(
+        (m) => m.PostDetailModule
+      ),
+  },
 ];
 
 @NgModule({
