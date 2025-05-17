@@ -1,0 +1,22 @@
+<div *ngIf="postsViewModel$ | async as pvm" class="posts-wrapper">
+  <app-filter-input
+    [value]="userFilter.value ?? ''"
+    (valueChange)="userFilter.setValue($event)"
+  ></app-filter-input>
+
+  <div class="scroll-container">
+    <app-posts-list
+      [posts]="pvm.posts"
+      (postSelected)="selectPost($event)"
+    ></app-posts-list>
+  </div>
+
+  <div class="pagination-container">
+    <app-pagination
+      [currentPage]="pvm.currentPage"
+      [totalPages]="pvm.totalPages"
+      (prev)="prevPage()"
+      (next)="nextPage(pvm.totalPages)"
+    ></app-pagination>
+  </div>
+</div>

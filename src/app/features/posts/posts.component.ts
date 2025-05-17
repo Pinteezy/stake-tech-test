@@ -15,11 +15,11 @@ import { Router } from '@angular/router';
 import { filterPostsByUsername, paginate } from '../../core/utils/post.utils';
 
 @Component({
-  selector: 'app-posts-list',
-  templateUrl: './posts-list.component.html',
-  styleUrls: ['./posts-list.component.scss'],
+  selector: 'app-posts',
+  templateUrl: './posts.component.html',
+  styleUrls: ['./posts.component.scss'],
 })
-export class PostsListComponent {
+export class PostsComponent {
   userFilter = new FormControl(this.postService.getFilter());
   pageSize = 10;
 

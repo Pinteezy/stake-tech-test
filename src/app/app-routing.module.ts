@@ -5,7 +5,7 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () =>
-      import('./features/posts-list/posts-list.module').then((m) => m.PostsListModule),
+      import('./features/posts/posts.module').then((m) => m.PostsModule),
   },
   {
     path: 'posts/:id',
