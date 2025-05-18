@@ -34,7 +34,6 @@ import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 
       .filter-input {
         padding: 10px;
-        border-radius: 6px;
         max-width: 400px;
       }
     `,
