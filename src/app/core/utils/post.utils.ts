@@ -1,29 +1,36 @@
-import { Post } from '../models/post.model';
+import { EnrichedPost, Post } from '../models/post.model';
 import { User } from '../models/user.model';
 
 export function filterPostsByUsername(
-  posts: Post[],
-  users: User[],
-  filter: string | null
-): Post[] {
-  if (!filter) return posts;
+  posts: EnrichedPost[],
+  filter?: string
+): EnrichedPost[] {
+  const normalizedFilter = filter?.toLowerCase() ?? '';
 
-  const normalizedFilter = (filter ?? '').toLowerCase();
+  if (!normalizedFilter) return posts;
 
-  const matchedUserIds = new Set(
-    users
-      .filter((user) => user.username.toLowerCase().includes(normalizedFilter))
-      .map((user) => user.id)
+  return posts.filter((post) =>
+    post.username.toLowerCase().includes(normalizedFilter)
   );
-
-  return posts.filter((post) => matchedUserIds.has(post.userId));
 }
 
 export function paginate(
-  items: Post[],
+  items: EnrichedPost[],
   page: number,
   pageSize: number
-): Post[] {
+): EnrichedPost[] {
   const start = page * pageSize;
   return items.slice(start, start + pageSize);
+}
+
+export function enrichPostsWithUsernames(
+  posts: Post[],
+  users: User[]
+): EnrichedPost[] {
+  const userMap = new Map(users.map((user) => [user.id, user.username]));
+
+  return posts.map((post) => ({
+    ...post,
+    username: userMap.get(post.userId) ?? 'Unknown',
+  }));
 }

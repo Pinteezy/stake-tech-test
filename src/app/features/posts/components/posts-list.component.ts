@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { Post } from 'src/app/core/models/post.model';
+import { Post, EnrichedPost } from 'src/app/core/models/post.model';
 
 @Component({
   selector: 'app-posts-list',
@@ -12,7 +12,7 @@ import { Post } from 'src/app/core/models/post.model';
         tabindex="0"
       >
         <mat-card-title>{{ post.title }}</mat-card-title>
-        <mat-card-subtitle>User ID: {{ post.userId }}</mat-card-subtitle>
+        <mat-card-subtitle>Username: {{ post.username }}</mat-card-subtitle>
         <mat-card-content>{{ post.body }}</mat-card-content>
       </mat-card>
     </div>
@@ -37,6 +37,6 @@ import { Post } from 'src/app/core/models/post.model';
   ],
 })
 export class PostsListComponent {
-  @Input() posts: Post[] = [];
+  @Input() posts: EnrichedPost[] = [];
   @Output() postSelected = new EventEmitter<Post>();
 }

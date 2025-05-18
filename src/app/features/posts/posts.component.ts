@@ -1,10 +1,14 @@
 import { Component } from '@angular/core';
-import { catchError, combineLatest, map, of } from 'rxjs';
+import { catchError, combineLatest, map, of, shareReplay } from 'rxjs';
 import { PostService } from 'src/app/core/services/post/post.service';
 import { UserService } from 'src/app/core/services/user/user.service';
 import { Post } from 'src/app/core/models/post.model';
 import { Router } from '@angular/router';
-import { filterPostsByUsername, paginate } from '../../core/utils/post.utils';
+import {
+  enrichPostsWithUsernames,
+  filterPostsByUsername,
+  paginate,
+} from '../../core/utils/post.utils';
 
 @Component({
   selector: 'app-posts',
@@ -15,24 +19,25 @@ export class PostsComponent {
   pageSize = 10;
   error: string | null = null;
 
-  postsViewModel$ = combineLatest([
-    this.postService.getPosts().pipe(
-      catchError((err) => {
-        this.handleError('Failed to load posts.');
-        return of([]); 
-      })
-    ),
-    this.userService.getUsers().pipe(
-      catchError((err) => {
-        this.handleError('Failed to load users.');
-        return of([]); 
-      })
-    ),
+  readonly enrichedPosts$ = combineLatest([
+    this.postService
+      .getPosts()
+      .pipe(catchError((err) => this.handleError('Failed to load posts.'))),
+    this.userService
+      .getUsers()
+      .pipe(catchError((err) => this.handleError('Failed to load users.'))),
+  ]).pipe(
+    map(([posts, users]) => enrichPostsWithUsernames(posts, users)),
+    shareReplay(1)
+  );
+
+  readonly postsViewModel$ = combineLatest([
+    this.enrichedPosts$,
     this.postService.page$,
     this.postService.filter$,
   ]).pipe(
-    map(([posts, users, currentPage, filter]) => {
-      const filtered = filterPostsByUsername(posts, users, filter);
+    map(([enrichedPosts, currentPage, filter]) => {
+      const filtered = filterPostsByUsername(enrichedPosts, filter);
       const paginated = paginate(filtered, currentPage, this.pageSize);
 
       return {
@@ -72,5 +77,6 @@ export class PostsComponent {
 
   private handleError(message: string) {
     this.error = message;
+    return of([]);
   }
 }
