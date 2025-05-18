@@ -7,7 +7,7 @@ import { Post, EnrichedPost } from 'src/app/core/models/post.model';
     <div class="posts-list">
       <mat-card
         class="post-card"
-        *ngFor="let post of posts"
+        *ngFor="let post of posts; trackBy: trackByPostId"
         (click)="postSelected.emit(post)"
         tabindex="0"
       >
@@ -39,4 +39,8 @@ import { Post, EnrichedPost } from 'src/app/core/models/post.model';
 export class PostsListComponent {
   @Input() posts: EnrichedPost[] = [];
   @Output() postSelected = new EventEmitter<Post>();
+
+  trackByPostId(index: number, post: Post): number {
+    return post.id;
+  }
 }

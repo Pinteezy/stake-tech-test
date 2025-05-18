@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostService } from 'src/app/core/services/post/post.service';
 import { Post } from 'src/app/core/models/post.model';
-import { Observable, switchMap, of } from 'rxjs';
+import { Observable, switchMap, of, map, take } from 'rxjs';
 
 @Component({
   selector: 'app-post-detail',
@@ -18,16 +18,17 @@ export class PostDetailComponent {
     private postService: PostService
   ) {
     this.post$ = this.route.paramMap.pipe(
-      switchMap((params) => {
-        const id = Number(params.get('id'));
-        return this.postService.selectedPost$.pipe(
+      map((params) => Number(params.get('id'))),
+      switchMap((id) =>
+        this.postService.selectedPost$.pipe(
+          take(1),
           switchMap((selected) =>
             selected?.id === id
               ? of(selected)
               : this.postService.getPostById(id)
           )
-        );
-      })
+        )
+      )
     );
   }
 

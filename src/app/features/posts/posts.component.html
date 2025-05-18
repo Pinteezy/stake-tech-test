@@ -5,9 +5,11 @@
   ></app-filter-input>
 
   <div class="scroll-container">
-    <div *ngIf="error" class="error-message">
-      {{ error }}
-    </div>
+    <ng-container *ngIf="error">
+      <p class="error-message">
+        {{ error }}
+      </p>
+    </ng-container>
 
     <app-posts-list
       [posts]="pvm.posts"
