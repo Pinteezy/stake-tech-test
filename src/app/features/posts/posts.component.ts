@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { catchError, combineLatest, map, of, shareReplay } from 'rxjs';
 import { PostService } from 'src/app/core/services/post/post.service';
 import { UserService } from 'src/app/core/services/user/user.service';
@@ -18,6 +18,7 @@ import {
 export class PostsComponent {
   pageSize = 10;
   error: string | null = null;
+  @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
 
   readonly enrichedPosts$ = combineLatest([
     this.postService
@@ -58,12 +59,18 @@ export class PostsComponent {
 
   nextPage(totalPages: number) {
     const next = this.postService.getPage() + 1;
-    if (next < totalPages) this.postService.setPage(next);
+    if (next < totalPages) {
+      this.postService.setPage(next);
+      this.scrollToTop();
+    }
   }
 
   prevPage() {
     const prev = this.postService.getPage() - 1;
-    if (prev >= 0) this.postService.setPage(prev);
+    if (prev >= 0) {
+      this.postService.setPage(prev);
+      this.scrollToTop();
+    }
   }
 
   selectPost(post: Post) {
@@ -78,5 +85,11 @@ export class PostsComponent {
   private handleError(message: string) {
     this.error = message;
     return of([]);
+  }
+
+  private scrollToTop() {
+    if (this.scrollContainer) {
+      this.scrollContainer.nativeElement.scrollTop = 0;
+    }
   }
 }

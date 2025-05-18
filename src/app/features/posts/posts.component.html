@@ -4,7 +4,7 @@
     (valueChange)="onFilterChange($event)"
   ></app-filter-input>
 
-  <div class="scroll-container">
+  <div #scrollContainer class="scroll-container">
     <ng-container *ngIf="error">
       <p class="error-message">
         {{ error }}
