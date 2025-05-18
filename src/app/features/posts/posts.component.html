@@ -5,6 +5,10 @@
   ></app-filter-input>
 
   <div class="scroll-container">
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+
     <app-posts-list
       [posts]="pvm.posts"
       (postSelected)="selectPost($event)"

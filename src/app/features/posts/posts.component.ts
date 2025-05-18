@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { combineLatest, map } from 'rxjs';
+import { catchError, combineLatest, map, of } from 'rxjs';
 import { PostService } from 'src/app/core/services/post/post.service';
 import { UserService } from 'src/app/core/services/user/user.service';
 import { Post } from 'src/app/core/models/post.model';
@@ -13,10 +13,21 @@ import { filterPostsByUsername, paginate } from '../../core/utils/post.utils';
 })
 export class PostsComponent {
   pageSize = 10;
+  error: string | null = null;
 
   postsViewModel$ = combineLatest([
-    this.postService.getPosts(),
-    this.userService.getUsers(),
+    this.postService.getPosts().pipe(
+      catchError((err) => {
+        this.handleError('Failed to load posts.');
+        return of([]); 
+      })
+    ),
+    this.userService.getUsers().pipe(
+      catchError((err) => {
+        this.handleError('Failed to load users.');
+        return of([]); 
+      })
+    ),
     this.postService.page$,
     this.postService.filter$,
   ]).pipe(
@@ -57,5 +68,9 @@ export class PostsComponent {
 
   onFilterChange(value: string) {
     this.postService.setFilter(value);
+  }
+
+  private handleError(message: string) {
+    this.error = message;
   }
 }

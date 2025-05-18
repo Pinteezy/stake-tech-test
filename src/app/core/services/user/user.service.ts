@@ -3,7 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 import { User } from '../../models/user.model';
 import { API_BASE_URL } from '../../tokens/api-base-url.token';
-import { Post } from '../../models/post.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
