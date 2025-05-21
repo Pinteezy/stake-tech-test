@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { Post, EnrichedPost } from 'src/app/core/models/post.model';
 
 @Component({
@@ -35,6 +35,7 @@ import { Post, EnrichedPost } from 'src/app/core/models/post.model';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PostsListComponent {
   @Input() posts: EnrichedPost[] = [];

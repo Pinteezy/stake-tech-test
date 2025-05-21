@@ -5,7 +5,7 @@
   ></app-filter-input>
 
   <div #scrollContainer class="scroll-container">
-    <ng-container *ngIf="error">
+    <ng-container *ngIf="error$ | async as error">
       <p class="error-message">
         {{ error }}
       </p>

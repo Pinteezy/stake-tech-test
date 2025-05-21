@@ -5,12 +5,14 @@ import {
   EventEmitter,
   OnInit,
   OnDestroy,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-filter-input',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="filter-container">
       <label for="filterInput">Filter by username</label>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PostService } from 'src/app/core/services/post/post.service';
 import { Post } from 'src/app/core/models/post.model';
@@ -8,6 +8,7 @@ import { Observable, switchMap, of, map, take } from 'rxjs';
   selector: 'app-post-detail',
   templateUrl: './post-detail.component.html',
   styleUrls: ['./post-detail.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PostDetailComponent {
   post$: Observable<Post>;

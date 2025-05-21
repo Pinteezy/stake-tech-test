@@ -1,5 +1,12 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { catchError, combineLatest, map, of, shareReplay } from 'rxjs';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  map,
+  of,
+  shareReplay,
+} from 'rxjs';
 import { PostService } from 'src/app/core/services/post/post.service';
 import { UserService } from 'src/app/core/services/user/user.service';
 import { Post } from 'src/app/core/models/post.model';
@@ -14,10 +21,11 @@ import {
   selector: 'app-posts',
   templateUrl: './posts.component.html',
   styleUrls: ['./posts.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PostsComponent {
   pageSize = 10;
-  error: string | null = null;
+  readonly error$ = new BehaviorSubject<string | null>(null);
   @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
 
   readonly enrichedPosts$ = combineLatest([
@@ -83,7 +91,7 @@ export class PostsComponent {
   }
 
   private handleError(message: string) {
-    this.error = message;
+    this.error$.next(message);
     return of([]);
   }
 
